@@ -213,7 +213,8 @@
 			class="
 					class={'ease flex flex-col overflow-hidden transition-all duration-500' +
 				' ' +
-				(configOpen ? 'h-40' : 'h-0 p-0')}"
+				// TODO: fix height transition when select is open
+				(configOpen ? 'h-fit' : 'h-0 p-0')}"
 		>
 			<div class="flex flex-row items-center">
 				<span class="shine mr-1 text-lg font-medium">Tutorial</span>
@@ -439,7 +440,7 @@
 	.my-container {
 		border: gray 2px solid;
 		border-radius: 1rem;
-		margin: 0.5rem 2rem;
+		margin: 0.5rem;
 		padding: 0.5rem 1rem;
 		position: relative;
 		background-color: #222222;
@@ -449,6 +450,12 @@
 		box-shadow:
 			var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow),
 			var(--tw-ring-shadow), var(--tw-shadow);
+	}
+
+	@media (min-width: 768px) {
+		.my-container {
+			margin: 0.5rem 2rem;
+		}
 	}
 	.my-container > legend {
 		font-size: 1.25rem;
