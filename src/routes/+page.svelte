@@ -16,6 +16,7 @@
 	let db: SimpleCompany[] = $state([]);
 	let apiKey = $state('');
 	let messageOpen = $state(true);
+	let configOpen = $state(true);
 	let query = $state({
 		minRating: 0,
 		maxRating: 10,
@@ -159,89 +160,123 @@
 </script>
 
 <div class="flex h-full w-full flex-col">
-	<div class="my-container flex flex-row items-center justify-between">
+	<div class="my-container flex flex-row flex-wrap items-center justify-between">
 		<h1 class="mr-4 text-2xl font-semibold">TornJobs</h1>
-		<span class="flex flex-row justify-center">
-			Your API key(<Tooltip text="generate api key"
-				><span
-					role="button"
-					tabindex="0"
-					class="font-medium hover:cursor-pointer hover:underline"
-					onclick={() => openExternalLink(`https://www.torn.com/preferences.php#tab=api`)}
-					onkeydown={(e) => {
-						if (e.key === 'Enter' || e.key === ' ') {
-							openExternalLink(`https://www.torn.com/preferences.php#tab=api`);
-						}
-					}}
-				>
-					minimal
-				</span></Tooltip
-			>): <TextField bind:value={apiKey} props={{ placeholder: 'Minimal access API key' }} />
-		</span>
-		<a class=" text-zinc-700" href="https://www.torn.com/profiles.php?XID=3718662">by Termained</a>
+		<div class="flex flex-row flex-wrap items-center">
+			<div>
+				Your API key(<Tooltip text="generate api key"
+					><span
+						role="button"
+						tabindex="0"
+						class="font-medium hover:cursor-pointer hover:underline"
+						onclick={() => openExternalLink(`https://www.torn.com/preferences.php#tab=api`)}
+						onkeydown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								openExternalLink(`https://www.torn.com/preferences.php#tab=api`);
+							}
+						}}
+					>
+						minimal</span
+					></Tooltip
+				>):
+			</div>
+			<TextField bind:value={apiKey} props={{ placeholder: 'Minimal access API key' }} />
+		</div>
+		<a class=" text-zinc-500" href="https://www.torn.com/profiles.php?XID=3718662">by Termained</a>
 	</div>
 
 	<fieldset class="my-container flex flex-row flex-wrap items-center gap-x-4">
-		<legend>Config</legend>
-		<div class="flex flex-row items-center">
-			<span class="shine mr-1 text-lg font-medium">Tutorial</span>
-			<Tooltip
-				textClassName="w-75"
-				text={`To use the app, start by setting the type of company you want to check in the config - everything else is optional and up to you. You can then prepare your message to the directors; once you copy the body, your stats will automatically be filled in. At the bottom of the app, you'll find a list of companies. When you mark one as "mailed", it'll move to the bottom of the list - out of your way for now, but easy to come back to later :)`}
-			/>
-		</div>
-		<div>
-			Company type: <select bind:value={query.companyType}>
-				{#each companiesIds as company}
-					<option class="text-black" value={company.id}>{company.name}</option>
-				{/each}
-			</select>
-		</div>
-		<div>
-			Min rating: <input
-				bind:value={query.minRating}
-				type="number"
-				min="0"
-				max={query.maxRating === 0 || !query.maxRating ? 10 : query.maxRating}
-			/>
-			<MdiStar class="inline-block" />
-		</div>
-		<div>
-			Max rating: <input
-				bind:value={query.maxRating}
-				type="number"
-				max="10"
-				min={query.minRating}
-			/><MdiStar class="inline-block" />
-		</div>
-		<div>Has empty slots: <input type="checkbox" bind:checked={query.hasEmptySlots} /></div>
+		<legend>
+			<Tooltip text="Click to show/hide config form">
+				<div
+					class="flex flex-row items-center gap-2 hover:cursor-pointer"
+					onclick={() => (configOpen = !configOpen)}
+					role="button"
+					tabindex="0"
+					onkeydown={(e) => {
+						if (e.key === 'Enter' || e.key === ' ') {
+							configOpen = !configOpen;
+						}
+					}}
+				>
+					Config <span>
+						{#if configOpen}
+							<MdiShow />
+						{:else}
+							<MdiHide />
+						{/if}
+					</span>
+				</div>
+			</Tooltip></legend
+		>
+		<div
+			class="
+					class={'ease flex flex-col overflow-hidden transition-all duration-500' +
+				' ' +
+				(configOpen ? 'h-40' : 'h-0 p-0')}"
+		>
+			<div class="flex flex-row items-center">
+				<span class="shine mr-1 text-lg font-medium">Tutorial</span>
+				<Tooltip
+					textClassName="w-75"
+					text={`To use the app, start by setting the type of company you want to check in the config - everything else is optional and up to you. You can then prepare your message to the directors; once you copy the body, your stats will automatically be filled in. At the bottom of the app, you'll find a list of companies. When you mark one as "mailed", it'll move to the bottom of the list - out of your way for now, but easy to come back to later :)`}
+				/>
+			</div>
+			<div>
+				Company type: <select bind:value={query.companyType}>
+					{#each companiesIds as company}
+						<option class="text-black" value={company.id}>{company.name}</option>
+					{/each}
+				</select>
+			</div>
+			<div>
+				Min rating: <input
+					bind:value={query.minRating}
+					type="number"
+					min="0"
+					max={query.maxRating === 0 || !query.maxRating ? 10 : query.maxRating}
+				/>
+				<MdiStar class="inline-block" />
+			</div>
+			<div>
+				Max rating: <input
+					bind:value={query.maxRating}
+					type="number"
+					max="10"
+					min={query.minRating}
+				/><MdiStar class="inline-block" />
+			</div>
+			<div>Has empty slots: <input type="checkbox" bind:checked={query.hasEmptySlots} /></div>
 
-		<div class="mt-2 flex w-full flex-row items-center gap-2">
-			<Button className="text-xl" props={{ type: 'button', onclick: search }}>Search</Button>
-			<!-- <Tooltip text="every time you change company" /> -->
+			<div class="mt-2 flex w-full flex-row items-center gap-2">
+				<Button className="text-xl" props={{ type: 'button', onclick: search }}>Search</Button>
+				<!-- <Tooltip text="every time you change company" /> -->
+			</div>
 		</div>
 	</fieldset>
 	<fieldset class="my-container">
-		<legend class="flex flex-row items-center gap-2"
-			>Message <span
-				class="hover:cursor-pointer"
-				onclick={() => (messageOpen = !messageOpen)}
-				role="button"
-				tabindex="0"
-				onkeydown={(e) => {
-					if (e.key === 'Enter' || e.key === ' ') {
-						messageOpen = !messageOpen;
-					}
-				}}
-			>
-				<Tooltip text="Click to show/hide message form">
-					{#if messageOpen}
-						<MdiShow />
-					{:else}
-						<MdiHide />
-					{/if}
-				</Tooltip>
-			</span></legend
+		<legend>
+			<Tooltip text="Click to show/hide message form">
+				<div
+					class="flex flex-row items-center gap-2 hover:cursor-pointer"
+					onclick={() => (messageOpen = !messageOpen)}
+					role="button"
+					tabindex="0"
+					onkeydown={(e) => {
+						if (e.key === 'Enter' || e.key === ' ') {
+							messageOpen = !messageOpen;
+						}
+					}}
+				>
+					Message <span>
+						{#if messageOpen}
+							<MdiShow />
+						{:else}
+							<MdiHide />
+						{/if}
+					</span>
+				</div>
+			</Tooltip></legend
 		>
 
 		<div
@@ -299,7 +334,7 @@
 			{/if}
 			{#each db as company}
 				<div class="mb-2 rounded-lg bg-[#303030] px-4 py-2">
-					<h4 class="flex flex-row items-center gap-1 text-xl">
+					<h4 class="flex flex-row flex-wrap items-center gap-1 text-xl">
 						<span
 							role="button"
 							tabindex="0"
@@ -310,12 +345,17 @@
 								if (e.key === 'Enter' || e.key === ' ') {
 									openExternalLink(`https://www.torn.com/joblist.php#/p=corpinfo&ID=${company.id}`);
 								}
-							}}><span class="font-medium">{company.name}</span>#{company.id}</span
+							}}
+							><span class="mr-1 font-medium">
+								{@html company.name}
+							</span>
+							#{company.id}</span
 						>
-
-						{company.rating}<MdiStar />
+						<div class="flex flex-row items-center">
+							{company.rating}<MdiStar />
+						</div>
 					</h4>
-					<div class="flex flex-row gap-20">
+					<div class="flex flex-col sm:flex-row sm:gap-20">
 						<div class="flex flex-col">
 							<span
 								role="button"
