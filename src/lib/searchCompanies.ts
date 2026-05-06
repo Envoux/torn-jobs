@@ -95,7 +95,7 @@ export const searchCompanies = async (
 
 	if (
 		!lastUpdate ||
-		Date.now() - new Date(lastUpdate).getTime() > 3 * 60 * 60 * 1000 || // 3 hours
+		Date.now() - new Date(lastUpdate).getTime() > 5 * 60 * 1000 || // 5min
 		dbCopy.length === 0
 	) {
 		dbCopy = await updateDb(apiKey, companyType, dbCopy);
