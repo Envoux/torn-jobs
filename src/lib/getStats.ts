@@ -2,7 +2,8 @@ export const getStats = async (apiKey: string) => {
 	try {
 		const lastUpdate = localStorage.getItem(`stats-lastUpdate`);
 
-		if (lastUpdate && Date.now() - new Date(lastUpdate).getTime() < 3 * 60 * 60 * 1000) {
+		// If the stats were updated less than 5 minutes ago, return cached stats
+		if (lastUpdate && Date.now() - new Date(lastUpdate).getTime() < 5 * 60 * 1000) {
 			const cachedStats = localStorage.getItem(`stats`);
 			if (cachedStats) {
 				return JSON.parse(cachedStats);
